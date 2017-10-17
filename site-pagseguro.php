@@ -10,15 +10,9 @@ $app->get("/payment", function(){
 
 	User::verifyLogin(false);
 
-	var_dump($_SESSION);
-	exit;
-
 	$order = new Order();
 
 	$order->getFromSession();
-
-	var_dump($order);
-	exit;
 
 	$years = [];
 

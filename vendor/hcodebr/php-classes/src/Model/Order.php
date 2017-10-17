@@ -211,15 +211,7 @@ class Order extends Model {
 	public function toSession()
 	{
 
-		var_dump($_SESSION);
-
-		echo "<br/><br/><br/><br/>";
-
 		$_SESSION[Order::SESSION] = $this->getValues();
-
-		var_dump($_SESSION);
-
-		exit;
 
 	}
 
