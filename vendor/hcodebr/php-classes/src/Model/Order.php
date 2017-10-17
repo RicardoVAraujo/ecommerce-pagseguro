@@ -8,6 +8,7 @@ use \Hcode\Model\Cart;
 
 class Order extends Model {
 
+	const SESSION = "OrderSession";
 	const SUCCESS = "Order-Success";
 	const ERROR = "Order-Error";
 
@@ -204,6 +205,28 @@ class Order extends Model {
 			'total'=>(int)$resultTotal[0]["nrtotal"],
 			'pages'=>ceil($resultTotal[0]["nrtotal"] / $itemsPerPage)
 		];
+
+	}
+
+	public function toSession()
+	{
+
+		var_dump($_SESSION);
+
+		echo "<br/><br/><br/><br/>";
+
+		$_SESSION[Order::SESSION] = $this->getValues();
+
+		var_dump($_SESSION);
+
+		exit;
+
+	}
+
+	public function getFromSession()
+	{
+
+		$this->setData($_SESSION[Order::SESSION]);
 
 	}
 
