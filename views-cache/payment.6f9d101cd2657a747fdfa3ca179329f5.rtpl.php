@@ -364,7 +364,7 @@ scripts.push(function(){
 
                             $.each(response.installments[$("#brand_field").val()], function(index, installment){
 
-                                if (parseInt("<?php echo htmlspecialchars( $pagseguro["maxInstallment"], ENT_COMPAT, 'UTF-8', FALSE ); ?>") >= index) {
+                                if (parseInt("<?php echo htmlspecialchars( $pagseguro["maxInstallment"], ENT_COMPAT, 'UTF-8', FALSE ); ?>") > index) {
 
                                     if (installment.interestFree === true) {
 
@@ -430,6 +430,83 @@ scripts.push(function(){
             });
 
         }
+
+    });
+
+    function isValidCPF(number) {
+        var sum;
+        var rest;
+        sum = 0;
+        if (number == "00000000000") return false;
+
+        for (i=1; i<=9; i++) sum = sum + parseInt(number.substring(i-1, i)) * (11 - i);
+        rest = (sum * 10) % 11;
+
+        if ((rest == 10) || (rest == 11))  rest = 0;
+        if (rest != parseInt(number.substring(9, 10)) ) return false;
+
+        sum = 0;
+        for (i = 1; i <= 10; i++) sum = sum + parseInt(number.substring(i-1, i)) * (12 - i);
+        rest = (sum * 10) % 11;
+
+        if ((rest == 10) || (rest == 11))  rest = 0;
+        if (rest != parseInt(number.substring(10, 11) ) ) return false;
+        return true;
+    }
+
+    $("#form-credit").on("submit", function(e){
+
+        e.preventDefault();
+
+        if (!isValidCPF($("#form-credit [name=cpf]").val())) {
+            showError("Este número de CPF não é válido");
+            return false;
+        }
+
+        $("#form-credit [type=submit]").attr("disabled", "disabled");
+
+        var formData = $(this).serializeArray();
+
+        var params = {};
+
+        $.each(formData, function(index, field){
+
+            params[field.name] = field.value;
+
+        });
+
+        console.log(params);
+
+        PagSeguroDirectPayment.createCardToken({
+            cardNumber: params.number,
+            cvv: params.cvv,
+            expirationMonth: params.month,
+            expirationYear: params.year,
+            success: function(response) {
+                
+                console.log("TOKEN", response);
+                console.log("HASH", PagSeguroDirectPayment.getSenderHash());
+                console.log("params", params);
+
+            },
+            error: function(response) {
+                
+                var errors = [];
+
+                for (var code in response.errors)
+                {
+                    errors.push(response.errors[code]);
+                }
+                
+                showError(errors.toString());
+
+            },
+            complete: function(response) {
+
+                $("#form-credit [type=submit]").removeAttr("disabled");
+
+            }
+        });
 
     });
 
