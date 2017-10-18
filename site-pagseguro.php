@@ -23,9 +23,7 @@ $app->get("/payment", function(){
 
 	}
 
-	$page = new Page(array(
-		"footer"=>false
-	));
+	$page = new Page();
 
 	$page->setTpl("payment", array(
 		"order"=>$order->getValues(),
