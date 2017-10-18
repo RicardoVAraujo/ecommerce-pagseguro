@@ -9,7 +9,7 @@ class Config {
 	const SANDBOX_EMAIL = "anthonyribeiro1910@gmail.com";
 	const PRODUCTION_EMAIL = "anthonyribeiro1910@gmail.com";
 
-	const SANDBOX_TOKEN = "2FB54E71A05D4B37BA20617329C206F8";
+	const SANDBOX_TOKEN = "0BCE6F6A52794695823062A4BD8E4904";
 	const PRODUCTION_TOKEN = "2FB54E71A05D4B37BA20617329C206F8";
 
 	const SANDBOX_SESSIONS = "https://ws.sandbox.pagseguro.uol.com.br/v2/sessions";
