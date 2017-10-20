@@ -10,13 +10,15 @@ class Phone {
 	public function __construct(int $areaCode, int $number)
 	{
 
-		if (!$areaCode || $areaCode < 11 || $areaCode > 99) {
+		if (!$areaCode || $areaCode < 11 || $areaCode > 99)
+		{
 
 			throw new Exception("Informe o DDD do telefone.");
 
 		}
 
-		if (!$number || strlen($number) < 8 || strlen($number) > 9) {
+		if (!$number || strlen($number) < 8 || strlen($number) > 9)
+		{
 			
 			throw new Exception("Informe o número do telefone.");
 
