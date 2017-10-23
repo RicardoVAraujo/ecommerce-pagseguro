@@ -2,6 +2,10 @@
 
 namespace Hcode\PagSeguro;
 
+use Exception;
+use DOMDocument;
+use DOMElement;
+
 class Shipping {
 
 	const PAC = 1;
@@ -14,7 +18,7 @@ class Shipping {
 	private $addressRequired;
 
 	public function __construct(
-		Address $name,
+		Address $address,
 		float $cost,
 		int $type,		
 		bool $addressRequired = true
@@ -45,7 +49,7 @@ class Shipping {
 
 		$address = $this->address->getDomElement();
 		$address = $dom->importNode($address, true);
-		$address = $documents->appendChild($address);
+		$address = $shipping->appendChild($address);
 
 		$cost = $dom->createElement("cost", number_format($this->cost, 2, ".", ""));
 		$cost = $shipping->appendChild($cost);

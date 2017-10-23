@@ -2,6 +2,12 @@
 
 namespace Hcode\PagSeguro;
 
+use Exception;
+use DOMDocument;
+use DOMElement;
+use Hcode\PagSeguro\CreditCard\Installment;
+use Hcode\PagSeguro\CreditCard\Holder;
+
 class CreditCard {
 
 	private $token;
@@ -42,15 +48,15 @@ class CreditCard {
 		$token = $dom->createElement("token", $this->token);
 		$token = $creditCard->appendChild($token);
 		
-		$installment = $this->$installment->getDomElement();
+		$installment = $this->installment->getDomElement();
 		$installment = $dom->importNode($installment, true);
 		$installment = $creditCard->appendChild($installment);
 
-		$holder = $this->$holder->getDomElement();
+		$holder = $this->holder->getDomElement();
 		$holder = $dom->importNode($holder, true);
 		$holder = $creditCard->appendChild($holder);
 
-		$billingaddress = $this->$billingaddress->getDomElement("billingAddress");
+		$billingaddress = $this->billingaddress->getDomElement("billingAddress");
 		$billingaddress = $dom->importNode($billingaddress, true);
 		$billingaddress = $creditCard->appendChild($billingaddress);
 
