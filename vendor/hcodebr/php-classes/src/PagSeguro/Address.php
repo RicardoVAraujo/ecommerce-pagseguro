@@ -112,7 +112,7 @@ class Address {
 		$postalCode = $dom->createElement("postalCode", $this->postalCode);
 		$postalCode = $address->appendChild($postalCode);
 
-		$city = $dom->createElement("city", $this->city);
+		$city = $dom->createElement("city", utf8_encode($this->city));
 		$city = $address->appendChild($city);
 
 		$state = $dom->createElement("state", $this->state);

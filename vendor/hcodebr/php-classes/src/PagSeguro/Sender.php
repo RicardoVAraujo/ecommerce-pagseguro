@@ -84,7 +84,7 @@ class Sender {
 
 		$phone = $this->phone->getDomElement();
 		$phone = $dom->importNode($phone, true);
-		$phone = $documents->appendChild($phone);
+		$phone = $sender->appendChild($phone);
 
 		$hash = $dom->createElement("hash", $this->hash);
 		$hash = $sender->appendChild($hash);
