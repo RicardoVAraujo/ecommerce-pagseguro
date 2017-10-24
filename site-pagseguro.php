@@ -16,23 +16,41 @@ use \Hcode\PagSeguro\CreditCard\Installment;
 use \Hcode\PagSeguro\CreditCard\Holder;
 use \Hcode\Model\Order;
 
-$app->get("/payment/success", function(){
+$app->get("/payment/success/boleto", function(){
 
 	User::verifyLogin(false);
 
 	$order = new Order();
 
 	$order->getFromSession();
+
+	$order->get((int)$order->getidorder());
 	
 	$page = new Page();
 
-	$page->setTpl("payment-success", array(
+	$page->setTpl("payment-success-boleto", array(
 		"order"=>$order->getValues()
 	));
 
 });
 
-$app->post("/payment/credit", function(){
+$app->get("/payment/success", function(){
+	
+		User::verifyLogin(false);
+	
+		$order = new Order();
+	
+		$order->getFromSession();
+		
+		$page = new Page();
+	
+		$page->setTpl("payment-success", array(
+			"order"=>$order->getValues()
+		));
+	
+	});
+
+$app->post("/payment/boleto", function(){
 
 	User::verifyLogin(false);
 
@@ -65,24 +83,7 @@ $app->post("/payment/credit", function(){
 
 	$sender = new Sender($order->getdesperson(), $cpf, $birthDate, $phone, $order->getdesemail(), $_POST['hash']);
 
-	$holder = new Holder($order->getdesperson(), $cpf, $birthDate, $phone);
-
 	$shipping = new Shipping($shippingAddress, (float)$cart->getvlfreight(), Shipping::PAC);
-
-	$intallment = new Installment((int)$_POST['installments_qtd'], (float)$_POST['installments_value']);
-
-	$billingAddress = new Address(
-		$address->getdesaddress(),
-		$address->getdesnumber(),
-		$address->getdescomplement(),
-		$address->getdesdistrict(),
-		$address->getdeszipcode(),
-		$address->getdescity(),
-		$address->getdesstate(),
-		$address->getdescountry()
-	);
-
-	$creditCard = new CreditCard($_POST['token'], $intallment, $holder, $billingAddress);
 
 	$payment = new Payment($order->getidorder(), $sender, $shipping);
 
@@ -100,7 +101,7 @@ $app->post("/payment/credit", function(){
 
 	}
 
-	$payment->setCreditCard($creditCard);
+	$payment->setBoleto();
 
 	Transporter::sendTransaction($payment);
 
@@ -109,6 +110,84 @@ $app->post("/payment/credit", function(){
 	));
 
 });
+
+$app->post("/payment/credit", function(){
+	
+		User::verifyLogin(false);
+	
+		$order = new Order();
+	
+		$order->getFromSession();
+	
+		$order->get($order->getidorder());
+	
+		$address = $order->getAddress();
+	
+		$cart = $order->getCart();
+	
+		$cpf = new Document(Document::CPF, $_POST['cpf']);
+	
+		$phone = new Phone($_POST['ddd'], $_POST['phone']);
+	
+		$shippingAddress = new Address(
+			$address->getdesaddress(),
+			$address->getdesnumber(),
+			$address->getdescomplement(),
+			$address->getdesdistrict(),
+			$address->getdeszipcode(),
+			$address->getdescity(),
+			$address->getdesstate(),
+			$address->getdescountry()
+		);
+	
+		$birthDate = new DateTime($_POST['birth']);
+	
+		$sender = new Sender($order->getdesperson(), $cpf, $birthDate, $phone, $order->getdesemail(), $_POST['hash']);
+	
+		$holder = new Holder($order->getdesperson(), $cpf, $birthDate, $phone);
+	
+		$shipping = new Shipping($shippingAddress, (float)$cart->getvlfreight(), Shipping::PAC);
+	
+		$intallment = new Installment((int)$_POST['installments_qtd'], (float)$_POST['installments_value']);
+	
+		$billingAddress = new Address(
+			$address->getdesaddress(),
+			$address->getdesnumber(),
+			$address->getdescomplement(),
+			$address->getdesdistrict(),
+			$address->getdeszipcode(),
+			$address->getdescity(),
+			$address->getdesstate(),
+			$address->getdescountry()
+		);
+	
+		$creditCard = new CreditCard($_POST['token'], $intallment, $holder, $billingAddress);
+	
+		$payment = new Payment($order->getidorder(), $sender, $shipping);
+	
+		foreach ($cart->getProducts() as $product)
+		{
+	
+			$item = new Item(
+				(int)$product['idproduct'],
+				$product['desproduct'],
+				(float)$product['vlprice'],
+				(int)$product['nrqtd']
+			);
+	
+			$payment->addItem($item);
+	
+		}
+	
+		$payment->setCreditCard($creditCard);
+	
+		Transporter::sendTransaction($payment);
+	
+		echo json_encode(array(
+			"success"=>true
+		));
+	
+	});
 
 $app->get("/payment", function(){
 
